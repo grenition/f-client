@@ -1,0 +1,98 @@
+# ====================
+# OS-specific ignores
+# ====================
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.lnk
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Linux
+*~
+
+# ====================
+# IDEs and tooling
+# ====================
+
+# VS Code
+.vscode/
+*.code-workspace
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Rider
+.idea/
+*.sln.iml
+
+# ====================
+# Build and publish
+# ====================
+
+bin/
+obj/
+out/
+Generated\ Files/
+dist/
+
+# Blazor WebAssembly specific
+wwwroot/css/app.css
+wwwroot/css/bootstrap/bootstrap.min.css
+wwwroot/service-worker.published.js
+wwwroot/_framework/
+wwwroot/_content/
+
+# Publish artifacts
+*.publish/
+*.deploy/
+
+# ASP.NET user secrets
+secrets.json
+*.secret.json
+
+# Local environment config
+.env
+.env.*
+appsettings.Local.json
+appsettings.Development.json
+
+# Logs
+*.log
+
+# NPM/Yarn artifacts (if used)
+node_modules/
+package-lock.json
+yarn.lock
+
+# ====================
+# Misc
+# ====================
+
+*.db
+*.db-shm
+*.db-wal
+
+# JetBrains Rider additional folders
+.idea/
+*.idea/
+
+# ReSharper
+_ReSharper*/
+*.[Rr]e[Ss]harper
+
+# Others
+*.bak
+*.tmp
+*.swp
+*.pid
