@@ -49,6 +49,7 @@ else if (!string.IsNullOrEmpty(infoMessage))
 
 @code {
     [Parameter] public EventCallback<string> OnLoginError { get; set; }
+    [Parameter] public EventCallback OnLoginErrorEmailNotConfirmed { get; set; }
     [Parameter] public EventCallback<UserAuthResponse> OnLoginSuccess { get; set; }
     [Parameter] public EventCallback<UserAuthResponse> OnRequiresTwoFactor { get; set; }
 
@@ -88,6 +89,9 @@ else if (!string.IsNullOrEmpty(infoMessage))
                         serverError,
                         new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
+                    if (problem!.Title == "Email Not Confirmed")
+                        await OnLoginErrorEmailNotConfirmed.InvokeAsync();
+                    
                     errorMessage = problem!.Detail ?? problem.Title;
                 }
                 catch

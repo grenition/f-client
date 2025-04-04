@@ -1,0 +1,88 @@
+@page "/two-factor"
+@using System.ComponentModel.DataAnnotations
+@using System.Text.Json
+@using f_client.Data.Response
+@inject HttpClient Http
+
+<h5>Two factor code has been sent to your email.</h5>
+
+@if (!string.IsNullOrEmpty(errorMessage))
+{
+    <div class="validation-message">@errorMessage</div>
+}
+
+<EditForm Model="@twoFactorModel" OnValidSubmit="HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <div class="mb-3">
+        <label for="code" class="form-label">Code</label>
+        <InputText id="code" class="form-control" @bind-Value="twoFactorModel.Code" />
+        <ValidationMessage For="@(() => twoFactorModel.Code)" />
+    </div>
+    <button type="submit" class="btn btn-primary">Verify</button>
+</EditForm>
+
+@code {
+    [Parameter] public EventCallback<string> OnTwoFactorError { get; set; }
+    [Parameter] public EventCallback<UserAuthResponse> OnTwoFactorSuccess { get; set; }
+    [Parameter] public string? Token { get; set; }
+
+    private TwoFactorModel twoFactorModel = new();
+    private string? errorMessage;
+
+    private async Task HandleValidSubmit()
+    {
+        errorMessage = null;
+        try
+        {
+            var request = new { token = Token, code = twoFactorModel.Code };
+            using var response = await Http.PostAsJsonAsync("api/users/auth/login/two-factor", request);
+            if (!response.IsSuccessStatusCode)
+            {
+                var serverError = await response.Content.ReadAsStringAsync();
+                try
+                {
+                    var problem = JsonSerializer.Deserialize<ProblemDetails>(
+                        serverError,
+                        new JsonSerializerOptions { PropertyNameCaseInsensitive = true }
+                    );
+                    errorMessage = problem!.Detail ?? problem.Title;
+                }
+                catch
+                {
+                    errorMessage = "Server error";
+                }
+                await OnTwoFactorError.InvokeAsync(errorMessage);
+                return;
+            }
+            var authResponse = await response.Content.ReadFromJsonAsync<UserAuthResponse>();
+            if (authResponse == null)
+            {
+                var parseError = "Invalid or empty response from server.";
+                errorMessage = parseError;
+                await OnTwoFactorError.InvokeAsync(parseError);
+                return;
+            }
+            await OnTwoFactorSuccess.InvokeAsync(authResponse);
+        }
+        catch (Exception ex)
+        {
+            errorMessage = ex.Message;
+            await OnTwoFactorError.InvokeAsync(ex.Message);
+        }
+    }
+
+    public class TwoFactorModel
+    {
+        [Required(ErrorMessage = "Code is required")]
+        [MinLength(6, ErrorMessage = "Code must be at least 6 characters")]
+        [MaxLength(6, ErrorMessage = "Code cannot be longer than 6 characters")]
+        public string? Code { get; set; }
+    }
+
+    public class ProblemDetails
+    {
+        public string? Title { get; set; }
+        public string? Detail { get; set; }
+    }
+}

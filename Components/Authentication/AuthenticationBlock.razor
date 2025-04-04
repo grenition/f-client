@@ -1,0 +1,55 @@
+@using f_client.Data.Response
+
+@if (emailNotConfirmed)
+{
+    <EmailNotConfirmedBlock/>
+}
+else if (requiresTwoFactor)
+{
+    <TwoFactorLoginBlock Token="@twoFactorToken"
+                         OnTwoFactorError="HandleError"
+                         OnTwoFactorSuccess="HandleSuccess"/>
+}
+else
+{
+    <LoginBlock OnLoginError="HandleError"
+                OnLoginSuccess="HandleLoginSuccess"
+                OnRequiresTwoFactor="HandleRequiresTwoFactor"
+                OnLoginErrorEmailNotConfirmed="HandleEmailNotConfirmedError"/>
+}
+
+@code {
+    [Parameter] public EventCallback<string> OnError { get; set; }
+    [Parameter] public EventCallback<UserAuthResponse> OnSuccess { get; set; }
+
+    private bool requiresTwoFactor;
+    private string? twoFactorToken;
+    private bool emailNotConfirmed;
+
+    private Task HandleEmailNotConfirmedError()
+    {
+        emailNotConfirmed = true;
+        return Task.CompletedTask;
+    }
+
+    private async Task HandleError(string error)
+    {
+        await OnError.InvokeAsync(error);
+    }
+
+    private void HandleRequiresTwoFactor(UserAuthResponse response)
+    {
+        requiresTwoFactor = true;
+        twoFactorToken = response.Token;
+    }
+
+    private async Task HandleLoginSuccess(UserAuthResponse response)
+    {
+        await OnSuccess.InvokeAsync(response);
+    }
+
+    private async Task HandleSuccess(UserAuthResponse response)
+    {
+        await OnSuccess.InvokeAsync(response);
+    }
+}
