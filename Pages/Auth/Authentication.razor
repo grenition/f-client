@@ -1,10 +1,15 @@
 @page "/auth"
 @using f_client.Components.Authentication
+@using f_client.Data.Response
+@inject NavigationManager Navigation
 
 <PageTitle>Authentication</PageTitle>
 
-<AuthenticationBlock />
+<AuthenticationBlock OnSuccess="HandleSuccess" />
 
 @code {
-    
+    private void HandleSuccess(UserAuthResponse response)
+    {
+        Navigation.NavigateTo("/");
+    }
 }
