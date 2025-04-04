@@ -1,6 +1,8 @@
 @page "/login"
 @using System.ComponentModel.DataAnnotations
 @using System.Text.Json
+@using f_client.Data.Request
+@using f_client.Data.Response
 @inject HttpClient Http
 
 @if (!string.IsNullOrEmpty(errorMessage))
@@ -46,8 +48,8 @@ else if (!string.IsNullOrEmpty(infoMessage))
 </EditForm>
 
 @code {
-    [Parameter] public EventCallback OnLoginSuccess { get; set; }
     [Parameter] public EventCallback<string> OnLoginError { get; set; }
+    [Parameter] public EventCallback<UserAuthResponse> OnLoginSuccess { get; set; }
     [Parameter] public EventCallback<UserAuthResponse> OnRequiresTwoFactor { get; set; }
 
     private LoginModel loginModel = new();
@@ -112,8 +114,7 @@ else if (!string.IsNullOrEmpty(infoMessage))
             }
             else
             {
-                Console.WriteLine("Login success! Token: " + authResponse.Token);
-                await OnLoginSuccess.InvokeAsync();
+                await OnLoginSuccess.InvokeAsync(authResponse);
             }
         }
         catch (Exception ex)
@@ -132,20 +133,6 @@ else if (!string.IsNullOrEmpty(infoMessage))
         [Required(ErrorMessage = "Password is required")]
         [MinLength(6, ErrorMessage = "Password must be at least 6 characters")]
         public string? Password { get; set; }
-    }
-
-    public class UserAuthRequest
-    {
-        public string? Email { get; set; }
-        public string? Password { get; set; }
-    }
-
-    public class UserAuthResponse
-    {
-        public string? Token { get; set; }
-        public bool RequiresTwoFactor { get; set; }
-        public string? UserId { get; set; }
-        public string? Message { get; set; }
     }
 
     public class ProblemDetails
