@@ -1,0 +1,90 @@
+@page "/auth/confirm-email"
+@using System.Text.Json
+@using f_client.Data.Common
+@inject NavigationManager Navigation
+@inject HttpClient Http
+
+<h3>Confirming email...</h3>
+
+@if (!string.IsNullOrEmpty(message))
+{
+    <div>@message</div>
+}
+
+@code {
+    private string? login;
+    private string? token;
+    private string? message;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var uri = new Uri(Navigation.Uri);
+        var queryParams = ParseQuery(uri.Query);
+
+        queryParams.TryGetValue("login", out login);
+        queryParams.TryGetValue("token", out token);
+
+        if (string.IsNullOrEmpty(login) || string.IsNullOrEmpty(token))
+        {
+            message = "Invalid confirmation link.";
+            return;
+        }
+
+        try
+        {
+            var response = await Http.PostAsJsonAsync("/api/users/auth/confirm-email", new
+            {
+                email = login,
+                token = token
+            });
+
+            if (response.IsSuccessStatusCode)
+            {
+                var result = await response.Content.ReadFromJsonAsync<UserResponse>();
+                message = result?.Message ?? "Email confirmed successfully!";
+                await Task.Delay(2000);
+                Navigation.NavigateTo("/auth");
+            }
+            else
+            {
+                var error = await response.Content.ReadAsStringAsync();
+                try
+                {
+                    var problem = JsonSerializer.Deserialize<ProblemDetails>(
+                        error,
+                        new JsonSerializerOptions
+                        {
+                            PropertyNameCaseInsensitive = true
+                        });
+
+                    message = problem?.Detail ?? "Email confirmation failed.";
+                }
+                catch
+                {
+                    message = "Email confirmation failed.";
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            message = $"Error: {ex.Message}";
+        }
+    }
+
+    private Dictionary<string, string> ParseQuery(string query)
+    {
+        return query.TrimStart('?')
+            .Split('&', StringSplitOptions.RemoveEmptyEntries)
+            .Select(p => p.Split('=', 2))
+            .Where(p => p.Length == 2)
+            .ToDictionary(
+                p => Uri.UnescapeDataString(p[0]),
+                p => Uri.UnescapeDataString(p[1]));
+    }
+
+    public class UserResponse
+    {
+        public string? UserId { get; set; }
+        public string? Message { get; set; }
+    }
+}

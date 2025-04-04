@@ -1,30 +1,64 @@
+@page "/authenticate"
 @using f_client.Data.Response
 
-@if (emailNotConfirmed)
+@if (isRegistering)
 {
-    <EmailNotConfirmedBlock/>
+    <h1>Registration</h1>
+
+    <RegisterBlock OnRegisterError="HandleRegisterError"
+                   OnRegisterSuccess="HandleRegisterSuccess" />
+}
+else if (emailNotConfirmed)
+{
+    <h1>Email not confirmed</h1>
+    
+    <EmailNotConfirmedBlock />
 }
 else if (requiresTwoFactor)
 {
+    <h1>Log in</h1>
+
     <TwoFactorLoginBlock Token="@twoFactorToken"
                          OnTwoFactorError="HandleError"
-                         OnTwoFactorSuccess="HandleSuccess"/>
+                         OnTwoFactorSuccess="HandleSuccess" />
 }
 else
 {
+    <h1>Log in</h1>
+
     <LoginBlock OnLoginError="HandleError"
                 OnLoginSuccess="HandleLoginSuccess"
                 OnRequiresTwoFactor="HandleRequiresTwoFactor"
-                OnLoginErrorEmailNotConfirmed="HandleEmailNotConfirmedError"/>
+                OnLoginErrorEmailNotConfirmed="HandleEmailNotConfirmedError" />
 }
+
+<div class="mt-3 text-center">
+    @if (!isRegistering && emailNotConfirmed)
+    {
+    <div class="d-flex justify-content-center gap-3">
+        <span class="auth-link" @onclick="ShowRegister">Need an account? Register</span>
+        <span class="auth-link" @onclick="ShowLogin">Already have an account? Login</span>
+    </div>
+    }
+    else if (!isRegistering)
+    {
+    <span class="auth-link" @onclick="ShowRegister">Need an account? Register</span>
+    }
+    else
+    {
+    <span class="auth-link" @onclick="ShowLogin">Already have an account? Login</span>
+    }
+</div>
+
 
 @code {
     [Parameter] public EventCallback<string> OnError { get; set; }
     [Parameter] public EventCallback<UserAuthResponse> OnSuccess { get; set; }
 
     private bool requiresTwoFactor;
-    private string? twoFactorToken;
     private bool emailNotConfirmed;
+    private bool isRegistering;
+    private string? twoFactorToken;
 
     private Task HandleEmailNotConfirmedError()
     {
@@ -52,4 +86,28 @@ else
     {
         await OnSuccess.InvokeAsync(response);
     }
+    
+    private async Task HandleRegisterError(string error)
+    {
+        await HandleError(error);
+    }
+
+    private Task HandleRegisterSuccess(UserRegisterResponse response)
+    {
+        isRegistering = false;
+        return Task.CompletedTask;
+    }
+    
+    private void ShowRegister()
+    {
+        isRegistering = true;
+        emailNotConfirmed = false;
+    }
+
+    private void ShowLogin()
+    {
+        isRegistering = false;
+        emailNotConfirmed = false;
+    }
+
 }
