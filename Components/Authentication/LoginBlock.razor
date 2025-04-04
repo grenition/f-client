@@ -90,8 +90,11 @@ else if (!string.IsNullOrEmpty(infoMessage))
                         new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
                     if (problem!.Title == "Email Not Confirmed")
+                    {
                         await OnLoginErrorEmailNotConfirmed.InvokeAsync();
-                    
+                        return;
+                    }
+
                     errorMessage = problem!.Detail ?? problem.Title;
                 }
                 catch
