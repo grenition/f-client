@@ -5,11 +5,15 @@
 
 <PageTitle>Authentication</PageTitle>
 
-<AuthenticationBlock OnSuccess="HandleSuccess" />
+<div class="d-flex flex-column align-items-center">
+    <div class="auth-card">
+        <AuthenticationBlock OnSuccess="HandleSuccess" />
+    </div>
+</div>
 
 @code {
-    private void HandleSuccess(UserAuthResponse response)
-    {
-        Navigation.NavigateTo("/");
-    }
+private void HandleSuccess(UserAuthResponse response)
+{
+Navigation.NavigateTo("/");
+}
 }

@@ -113,11 +113,47 @@ code {
     text-align: start;
 }
 
-.auth-link {
-    cursor: pointer;
-    text-decoration: underline;
+.navbar {
+    background-color: var(--bs-body-bg);
+    border-bottom: 1px solid var(--bs-border-color-translucent);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+    backdrop-filter: blur(8px);
+    position: sticky;
+    top: 0;
+    z-index: 1030;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-.auth-link:hover {
-    text-decoration: none;
+.navbar-brand {
+    color: var(--bs-emphasis-color);
+    font-weight: 600;
+    font-size: 1.35rem;
+}
+
+.navbar-brand:hover {
+    color: var(--bs-link-hover-color);
+}
+
+.navbar-toggler {
+    border: none;
+    padding: 0.4rem;
+}
+
+.navbar-toggler-icon {
+    filter: invert(1);
+    opacity: 0.9;
+}
+
+.nav-link {
+    color: var(--bs-nav-link-color);
+    font-weight: 500;
+    transition: color 0.2s ease;
+}
+
+.nav-link:hover {
+    color: var(--bs-nav-link-hover-color);
+}
+
+.responsive-half-width {
+    width: clamp(300px, 50vw, 600px);
 }

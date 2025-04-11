@@ -44,17 +44,17 @@ else
     @if (!isRegistering && emailNotConfirmed)
     {
         <div class="d-flex justify-content-center gap-3">
-            <span class="auth-link" @onclick="ShowRegister">Need an account? Register</span>
-            <span class="auth-link" @onclick="ShowLogin">Already have an account? Login</span>
+            <span class="btn p-0" @onclick="ShowRegister">Need an account? Register</span>
+            <span class="btn p-0" @onclick="ShowLogin">Already have an account? Login</span>
         </div>
     }
     else if (!isRegistering && !registered)
     {
-        <span class="auth-link" @onclick="ShowRegister">Need an account? Register</span>
+        <span class="btn p-0" @onclick="ShowRegister">Need an account? Register</span>
     }
     else if (isRegistering)
     {
-        <span class="auth-link" @onclick="ShowLogin">Already have an account? Login</span>
+        <span class="btn p-0" @onclick="ShowLogin">Already have an account? Login</span>
     }
 </div>
 
