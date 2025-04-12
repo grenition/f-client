@@ -1,4 +1,8 @@
+@using f_client.Core.Providers
 @using f_client.Data.Response
+@using Microsoft.AspNetCore.Components.Authorization
+@inject IJSRuntime JsRuntime;
+@inject AuthenticationStateProvider AuthenticationStateProvider;
 
 @if (isRegistering)
 {
@@ -87,7 +91,12 @@ else
 
     private async Task HandleLoginSuccess(UserAuthResponse response)
     {
+        if (!string.IsNullOrWhiteSpace(response.Token))
+            await JsRuntime.InvokeVoidAsync("localStorage.setItem", "authToken", response.Token);
+
         await OnSuccess.InvokeAsync(response);
+        
+        ((ApiAuthenticationStateProvider)AuthenticationStateProvider).NotifyAuthenticationStateChangedTask();
     }
 
     private async Task HandleSuccess(UserAuthResponse response)

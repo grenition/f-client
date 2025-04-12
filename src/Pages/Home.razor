@@ -1,0 +1,18 @@
+@page "/"
+@using Microsoft.AspNetCore.Components.Authorization
+@inject AuthenticationStateProvider AuthStateProvider
+
+<h3>Home</h3>
+
+<AuthorizeView>
+    <Authorized>
+        <p>Welcome, @context.User.Identity?.Name!</p>
+    </Authorized>
+    <NotAuthorized>
+        <p>Please log in to access this page.</p>
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+    
+}

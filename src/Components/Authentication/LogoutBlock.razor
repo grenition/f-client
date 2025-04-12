@@ -1,0 +1,14 @@
+@using f_client.Core.Providers
+@using Microsoft.AspNetCore.Components.Authorization
+@inject IJSRuntime JsRuntime;
+@inject AuthenticationStateProvider AuthenticationStateProvider;
+
+<h3>LogoutBlock</h3>
+
+@code {
+    public void HandleLogout()
+    {
+        JsRuntime.InvokeVoidAsync("localStorage.removeItem", "authToken");
+        ((ApiAuthenticationStateProvider)AuthenticationStateProvider).NotifyAuthenticationStateChangedTask();
+    }
+}
