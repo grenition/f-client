@@ -1,0 +1,53 @@
+@using Microsoft.AspNetCore.Components.Authorization
+@inject NavigationManager NavManager
+@inject AuthenticationStateProvider AuthProvider
+
+<div class="sidebar-content">
+    <ul class="nav nav-pills flex-column">
+        <li class="nav-item">
+            <a class="nav-link @GetActiveClass("/")" href="/">Home</a>
+        </li>
+
+        @if (isAuthenticated)
+        {
+            <li class="nav-item">
+                <a class="nav-link @GetActiveClass("/profile")" href="/profile">Profile</a>
+            </li>
+        }
+        else
+        {
+            <li class="nav-item">
+                <a class="nav-link @GetActiveClass("/auth")" href="/auth">Authentication</a>
+            </li>
+        }
+    </ul>
+</div>
+
+@code {
+    private bool isAuthenticated;
+
+    protected override async Task OnInitializedAsync()
+    {
+        NavManager.LocationChanged += HandleLocationChanged;
+
+        var authState = await AuthProvider.GetAuthenticationStateAsync();
+        isAuthenticated = authState.User.Identity?.IsAuthenticated ?? false;
+    }
+
+    private void HandleLocationChanged(object? sender, Microsoft.AspNetCore.Components.Routing.LocationChangedEventArgs e)
+    {
+        StateHasChanged();
+    }
+
+    private string GetActiveClass(string path)
+    {
+        return NavManager.Uri.EndsWith(path, StringComparison.OrdinalIgnoreCase)
+            ? "active"
+            : "";
+    }
+
+    public void Dispose()
+    {
+        NavManager.LocationChanged -= HandleLocationChanged;
+    }
+}

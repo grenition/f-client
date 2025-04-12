@@ -1,14 +1,52 @@
 @using f_client.Core.Providers
 @using Microsoft.AspNetCore.Components.Authorization
-@inject IJSRuntime JsRuntime;
-@inject AuthenticationStateProvider AuthenticationStateProvider;
+@inject IJSRuntime JsRuntime
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject NavigationManager NavManager
 
-<h3>LogoutBlock</h3>
+<button class="btn btn-primary" @onclick="ShowModal">Logout</button>
+
+@if (showConfirmModal)
+{
+    <div class="modal-backdrop fade show"></div>
+    <div class="modal show d-block" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Confirm Logout</h5>
+                    <button type="button" class="btn-close" @onclick="HideModal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to log out?</p>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" @onclick="HideModal">Cancel</button>
+                    <button class="btn btn-danger" @onclick="ConfirmLogout">Logout</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
 
 @code {
-    public void HandleLogout()
+    private bool showConfirmModal = false;
+
+    private void ShowModal()
     {
-        JsRuntime.InvokeVoidAsync("localStorage.removeItem", "authToken");
+        showConfirmModal = true;
+    }
+
+    private void HideModal()
+    {
+        showConfirmModal = false;
+    }
+
+    private async Task ConfirmLogout()
+    {
+        await JsRuntime.InvokeVoidAsync("localStorage.removeItem", "authToken");
         ((ApiAuthenticationStateProvider)AuthenticationStateProvider).NotifyAuthenticationStateChangedTask();
+        showConfirmModal = false;
+        
+        NavManager.NavigateTo("/auth", forceLoad: true);
     }
 }

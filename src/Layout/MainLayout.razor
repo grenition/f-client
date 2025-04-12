@@ -1,14 +1,14 @@
-﻿@inherits LayoutComponentBase
+﻿@using f_client.Components
+@inherits LayoutComponentBase
 
-<div class="top-row navbar navbar-dark px-4">
+<div class="top-row navbar px-4">
     <div class="container-fluid">
         <a class="navbar-brand" href="">F Universe</a>
 
-        <div class="d-flex align-items-center">
-            <nav class="nav">
-                <NavLink class="nav-link" href="auth">Sign in</NavLink>
-            </nav>
-        </div>
+        <button class="border rounded p-2 shadow-sm bg-white" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarOffcanvas" aria-controls="sidebarOffcanvas">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
     </div>
 </div>
 
@@ -17,3 +17,13 @@
         @Body
     </article>
 </main>
+
+<div class="offcanvas offcanvas-end text-bg-light" tabindex="-1" id="sidebarOffcanvas" aria-labelledby="sidebarOffcanvasLabel">
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="sidebarOffcanvasLabel">Menu</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+        <Sidebar />
+    </div>
+</div>

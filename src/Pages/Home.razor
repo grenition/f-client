@@ -1,18 +1,21 @@
 @page "/"
 @using Microsoft.AspNetCore.Components.Authorization
+@using f_client.Components.Authentication
 @inject AuthenticationStateProvider AuthStateProvider
 
-<h3>Home</h3>
+<div class="d-flex flex-column align-items-center">
+    <h3>Home</h3>
 
-<AuthorizeView>
-    <Authorized>
-        <p>Welcome, @context.User.Identity?.Name!</p>
-    </Authorized>
-    <NotAuthorized>
-        <p>Please log in to access this page.</p>
-    </NotAuthorized>
-</AuthorizeView>
+    <AuthorizeView>
+        <Authorized>
+            <p>Welcome!</p>
+        </Authorized>
+        <NotAuthorized>
+            <p>Please log in to access this page.</p>
+        </NotAuthorized>
+    </AuthorizeView>
+</div>
 
 @code {
-    
+
 }

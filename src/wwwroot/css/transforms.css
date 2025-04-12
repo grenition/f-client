@@ -1,3 +1,7 @@
 .auth-card {
     width: clamp(300px, 50vw, 600px);
 }
+
+.sidebar-content {
+    padding: 1rem;
+}
